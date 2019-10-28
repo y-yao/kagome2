@@ -1,0 +1,71 @@
+make_hh.c : C program to generate Heisenberg Hamiltonian from edge set
+
+**************************
+
+compile:
+gcc -O2 make_hh.c -o make_hh
+
+**************************
+
+run:
+./make_hh edgefile mz hfile
+
+example:
+
+./make_hh 12sites 0. h12_0
+
+**************************
+
+edgefile: list of vertex pairs of the edges
+
+example file 12sites:
+
+18 12
+
+0 1
+1 2
+2 3
+3 4
+4 5
+5 0
+0 6
+1 6
+1 7
+2 7
+2 8
+3 8
+3 9
+4 9
+4 10
+5 10
+5 11
+0 11
+
+There 18 edges on 12 sites. Sites are numbered 0-11.
+
+**************************
+
+mz: total S_z
+
+allowed values: .0, .5, 1., 1.5, etc.
+
+**************************
+
+hfile: sparse encoded Hamiltonian file
+
+example file h12_0 (first 6 lines):
+
+ 13   0 6 5 11 10 31 30 86 85 211 210 462 467    -1.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+ 11   1 2 6 16 15 36 35 91 90 216 472    -0.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+ 11   2 3 1 20 19 40 39 95 216 468 476    -0.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+ 11   3 4 2 23 22 43 95 221 217 469 479    -0.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+ 11   4 5 3 25 43 99 96 222 218 470 481    -0.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+ 13   5 6 4 0 25 46 44 100 97 223 219 471 482    -1.50 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 .5 
+
+etc.
+
+From the first line we see that state 0 has 13 nonzeros to states 0, 6, ... , 467 with respective matrix elements
+-1.5, .5, ... , .5 . There are 924 lines (states) in the file and the states are numbered 0-923.
+
+
+
