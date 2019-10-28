@@ -20,7 +20,7 @@ public:
     H.resize(H_dim);
   };
 
-  void load_matrix(std::string Hamiltonian_file_name) {
+  void load_matrix_old(std::string Hamiltonian_file_name) {
     std::ifstream file(Hamiltonian_file_name); // input file name
 
     auto t_start = std::chrono::high_resolution_clock::now();
@@ -43,6 +43,37 @@ public:
         H[row].inds.push_back(ind);
       }
       H[row].inds.shrink_to_fit();
+    }
+    auto t_end = std::chrono::high_resolution_clock::now();
+    std::cout << "\tReading Hamiltonian takes " << std::chrono::duration<double>(t_end-t_start).count() << "s." << std::endl;
+  
+    if (row+1 != H_dim) {
+      std::cout<<"\nH_dim given is wrong!"<<std::endl;
+      std::exit(0);
+    }
+  }
+
+  void load_matrix(std::string Hamiltonian_file_name) {
+    std::ifstream file(Hamiltonian_file_name); // input file name
+
+    auto t_start = std::chrono::high_resolution_clock::now();
+
+    unsigned n_nonzero;
+    size_t row;
+  
+    std::string line;
+    while (std::getline(file, line)) {
+      std::istringstream iss(line);
+      std::vector<std::string> results(std::istream_iterator<std::string>{iss},
+                                       std::istream_iterator<std::string>());
+      n_nonzero = stoul(results[0]);
+      row = stoull(results[1]);
+      H[row].inds.resize(n_nonzero);
+      H[row].diag_entry = stod(results[1 + n_nonzero]);
+      H[row].inds[0] = row;
+      for (unsigned i = 2; i <= n_nonzero; i++) {
+        H[row].inds[i - 1] = stoull(results[i]);
+      }
     }
     auto t_end = std::chrono::high_resolution_clock::now();
     std::cout << "\tReading Hamiltonian takes " << std::chrono::duration<double>(t_end-t_start).count() << "s." << std::endl;

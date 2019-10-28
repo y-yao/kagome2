@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     Eigen::MatrixXd evecs = eigs.eigenvectors();
     fprintf(pFile, "\nConverged eigenvalues:\n");
     for (int i = nev - 1; i >= 0; i--) { // ground state before excited states
-        fprintf(pFile, "%11.7f  ", evals(i));
+        fprintf(pFile, "%11.8f  ", evals(i));
     }
     fprintf(pFile, "\n");
     for (int i = nev - 1; i >= 0; i--) {

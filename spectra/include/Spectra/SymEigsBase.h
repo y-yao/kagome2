@@ -192,7 +192,7 @@ private:
             m_ritz_vec.col(i).noalias() = evecs.col(ind[i]);
         }
 
-	Eigen::IOFormat Fmt(8);
+	Eigen::IOFormat Fmt(10);
 	std::cout << "%% " << m_ritz_val.head(m_nev).transpose().format(Fmt) << std::endl;
     }
 
@@ -378,7 +378,7 @@ public:
                 FILE* pFile;
 	        pFile = fopen("eigen_progress", "w");
                 for (int i = 0; i < m_nev; i++) {
-	            fprintf(pFile, "%13.9f\n", m_ritz_val(i));
+	            fprintf(pFile, "%13.8f ", m_ritz_val(i));
 	        }
 	        fprintf(pFile, "\n");
                 

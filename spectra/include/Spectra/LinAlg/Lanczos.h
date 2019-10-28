@@ -87,6 +87,7 @@ public:
             // If beta = 0, then the next V is not full rank
             // We need to generate a new residual vector that is orthogonal
             // to the current V, which we call a restart
+            // YY: doesn't seem to ever go into this block
             if(m_beta < m_near_0)
             {
                 MapConstMat V(m_fac_V.data(), m_n, i); // The first i columns
@@ -115,6 +116,8 @@ public:
 
             // f <- w - V * V'Bw = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
             // If restarting, we know that H[i+1, i] = 0
+            
+            //YY: m_fac_f.size() = m_n
             if(restart)
                 //m_fac_f.noalias() = w - m_fac_H(i, i) * v;
 #pragma omp parallel for schedule(static)
