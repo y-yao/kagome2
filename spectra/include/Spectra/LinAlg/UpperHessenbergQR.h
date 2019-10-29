@@ -241,6 +241,7 @@ public:
 
         // Compute the RQ matrix
         const Index n1 = m_n - 1;
+#pragma omp parallel for schedule(static)
         for(Index i = 0; i < n1; i++)
         {
             const Scalar c = m_rot_cos.coeff(i);
