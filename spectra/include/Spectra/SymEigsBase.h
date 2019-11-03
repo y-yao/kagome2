@@ -192,7 +192,7 @@ private:
             m_ritz_vec.col(i).noalias() = evecs.col(ind[i]);
         }
 
-	Eigen::IOFormat Fmt(10);
+	Eigen::IOFormat Fmt(11);
 	std::cout << "%% " << m_ritz_val.head(m_nev).transpose().format(Fmt) << std::endl;
     }
 
