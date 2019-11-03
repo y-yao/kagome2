@@ -370,7 +370,7 @@ public:
 	    std::cout << "Lanczos iter " << i << " takes " << std::chrono::duration<double>(end-start).count() << "s. Cumulative: " 
 		    << std::chrono::duration<double>(end-start0).count() << "s." << std::endl;
 
-	    if (i > 39 && i % 10 == 0) {
+	    if (i > 29 && i % 5 == 0) {
                 auto start4 = std::chrono::high_resolution_clock::now();
 	        // Sorting results
                 sort_ritzpair(sort_rule);

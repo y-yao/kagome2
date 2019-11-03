@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   
   auto start = std::chrono::high_resolution_clock::now();
   eigs.init();
-  int nconv = eigs.compute(100, 1e-8);
+  int nconv = eigs.compute(100, 1e-9);
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << "\tDiagonalization takes " << std::chrono::duration<double>(end-start).count() / 3600 << "hrs." << std::endl;
 
