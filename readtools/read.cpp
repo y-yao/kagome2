@@ -1,6 +1,7 @@
 #include <hps/src/hps.h>
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 int main(int argc, char *argv[]) {
 
