@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 
   if (argc == 2) {
     std::ifstream values_file(argv[1], std::ifstream::binary);
-    std::cout<<"reading..."<<std::endl;
+    std::cout<<"reading "<<argv[1]<<std::endl;
     auto values = hps::from_stream<std::vector<double>>(values_file);
 
     std::cout<<"No. nonzero entries: "<<values.size()<<std::endl;
