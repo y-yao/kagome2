@@ -390,7 +390,7 @@ public:
 #pragma omp parallel for schedule(static)
 		    for (long int j = 0; j < m_n; j++) {
 			evec(j) = 0.;
-			for (int k = 0; k < m_nev; k++) {
+			for (int k = 0; k < m_ncv; k++) {
 		            evec(j) += V(j, k) * m_ritz_vec(k, i);
 			}
 		    }
