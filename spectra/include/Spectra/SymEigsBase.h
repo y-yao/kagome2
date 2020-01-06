@@ -370,18 +370,22 @@ public:
 	    std::cout << "Lanczos iter " << i << " takes " << std::chrono::duration<double>(end-start).count() << "s. Cumulative: " 
 		    << std::chrono::duration<double>(end-start0).count() << "s." << std::endl;
 
-	    if (i > 29 && i % 5 == 0) {
+	    if (i > 19 && i % 5 == 0) {
                 auto start4 = std::chrono::high_resolution_clock::now();
 	        // Sorting results
                 sort_ritzpair(sort_rule);
-
+                 
+                std::vector<double> eigenvalues(m_nev, 0.);
                 FILE* pFile;
 	        pFile = fopen("eigen_progress", "w");
                 for (int i = 0; i < m_nev; i++) {
+                    eigenvalues[i] = m_ritz_val(i);
 	            fprintf(pFile, "%13.8f ", m_ritz_val(i));
 	        }
 	        fprintf(pFile, "\n");
-                
+                std::ofstream eigenvalues_file("eigenvalues.dat", std::ofstream::binary);
+                hps::to_stream(eigenvalues, eigenvalues_file);
+
 		//Matrix evecs(m_n, m_nev);
 		//evecs.noalias() = m_fac.matrix_V() * m_ritz_vec;
 		const Matrix& V = m_fac.matrix_V();

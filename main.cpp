@@ -35,14 +35,14 @@ int main(int argc, char *argv[]) {
   
   auto start = std::chrono::high_resolution_clock::now();
   eigs.init();
-  int nconv = eigs.compute(100, 1e-9);
+  int nconv = eigs.compute(150, 1e-9);
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << "\tDiagonalization takes " << std::chrono::duration<double>(end-start).count() / 3600 << "hrs." << std::endl;
 
   H.clear_matrix();
 
   Eigen::IOFormat Fmt(8);
-  if (eigs.info() == SUCCESSFUL) {
+  /*if (eigs.info() == SUCCESSFUL) {
     Eigen::VectorXd evals = eigs.eigenvalues();
     Eigen::MatrixXd evecs = eigs.eigenvectors();
     fprintf(pFile, "\nConverged eigenvalues:\n");
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
       std::ofstream values_file("values"+std::to_string(result_file_index)+".dat", std::ofstream::binary);
       hps::to_stream(values, values_file);
     }
-  }
+  }*/
   fclose(pFile);
 
   return 0;
