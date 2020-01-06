@@ -9,6 +9,7 @@
 main
 make_hh
 read
+project
 
 # Precompiled Headers
 *.gch

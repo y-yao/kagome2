@@ -273,8 +273,9 @@ fp=fopen(eigenfile,"r");
 
 fscanf(fp,"%*[^\n]\n");
 
-fscanf(fp,"%d%d",&size2,&num);
+fscanf(fp,"%llu%d",&size2,&num);
 
+printf("size2=%llu size=%llu\n", size2, size);
 if(size2!=size)
 	{
 	fprintf(stderr,"eigenvector size and basis size are inconsistent\n");
