@@ -6,8 +6,10 @@
 #include <stdlib.h>
 #include <vector>
 #include <chrono>
+#include <omp.h>
 
-unsigned long long site[100], size, *bits;
+unsigned long long site[100], size;
+std::vector<unsigned long long> bits;
 int sites, pair[100][2], edges, edge[100][2], defects, defect[100][3];
 double alpha = -.333333333333;
 
@@ -53,16 +55,18 @@ void setbits() {
     site[s] = 1ULL << s;
 
   size = 0;
-  for (b = 0; b < 1ULL << sites; ++b)
-    if (mz2total(b) == 0)
-      ++size;
 
-  bits = (unsigned long long *)malloc(size * sizeof(unsigned long long));
-
-  size = 0;
-  for (b = 0; b < 1ULL << sites; ++b)
-    if (mz2total(b) == 0)
-      bits[size++] = b;
+  std::ifstream bits_file("bits.dat", std::ifstream::binary);
+  if (!bits_file) {
+    for (b = 0; b < 1ULL << sites; ++b) {
+      if (mz2total(b)==0) {
+        bits.push_back(b);
+      }
+    }
+  } else {
+    bits = hps::from_stream<std::vector<unsigned long long>>(bits_file);
+  }
+  size = bits.size();
 }
 
 void dimerize(double *psi, unsigned long long b, int sgn, int d) {
@@ -75,13 +79,14 @@ void dimerize(double *psi, unsigned long long b, int sgn, int d) {
 }
 
 void hpair(int i, int j, double *psi, double *hpsi) {
-  unsigned long long s, b, si, sj;
+  unsigned long long s, si, sj;
 
   si = site[i];
   sj = site[j];
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s) {
-    b = bits[s];
+    unsigned long long b = bits[s];
 
     if (((b & si) == 0) == ((b & sj) == 0)) {
       hpsi[s] += .25 * psi[s];
@@ -96,6 +101,7 @@ void h(double *psi, double *hpsi) {
   unsigned long long s;
   int e;
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s)
     hpsi[s] = 0.;
 
@@ -106,6 +112,7 @@ void h(double *psi, double *hpsi) {
 void hdefect(int i, int j, int k, double *psi, double *hpsi) {
   unsigned long long s;
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s)
     hpsi[s] = 0.;
 
@@ -113,6 +120,7 @@ void hdefect(int i, int j, int k, double *psi, double *hpsi) {
   hpair(j, k, psi, hpsi);
   hpair(k, i, psi, hpsi);
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s)
     hpsi[s] = (1. + .75 * alpha) * psi[s] + alpha * hpsi[s];
 }
@@ -122,9 +130,14 @@ double dot(double *psi1, double *psi2) {
   unsigned long long s;
 
   d = 0.;
-  for (s = 0; s < size; ++s)
-    d += psi1[s] * psi2[s];
-
+  const int n_threads = omp_get_max_threads();
+  std::vector<double> sum_thread(n_threads, 0.);
+#pragma omp parallel for
+  for (s = 0; s < size; ++s) {
+    const int thread_id = omp_get_thread_num();
+    sum_thread[thread_id] += psi1[s] * psi2[s];
+  }
+  for (int i = 0; i < n_threads; i++) d += sum_thread[i];
   return d;
 }
 
@@ -134,6 +147,7 @@ void normalize(double *psi) {
 
   norm = sqrt(dot(psi, psi));
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s)
     psi[s] /= norm;
 }
@@ -144,6 +158,7 @@ void projout(double *psi, double *psiout) {
 
   d = dot(psi, psiout);
 
+#pragma omp parallel for
   for (s = 0; s < size; ++s)
     psi[s] -= d * psiout[s];
 }
@@ -196,6 +211,7 @@ int main(int argc, char *argv[]) {
   dimers = sites / 2;
 
   for (i = 0; i < states; ++i) {
+#pragma omp parallel for
     for (s = 0; s < size; ++s)
       basis[i][s] = 0.;
 
@@ -212,6 +228,7 @@ int main(int argc, char *argv[]) {
 
       hdefect(t1, t2, t3, basis[i], tmp);
 
+#pragma omp parallel for
       for (s = 0; s < size; ++s)
         basis[i][s] = tmp[s];
     }
@@ -239,6 +256,7 @@ int main(int argc, char *argv[]) {
 
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << "\tCalculating low-energy Hamiltonian takes " << std::chrono::duration<double>(end-start).count() / 3600 << "hrs." << std::endl;
+
 
   std::cout << "\nsize = " << size << "\n";
   
