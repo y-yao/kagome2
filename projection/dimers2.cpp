@@ -7,6 +7,7 @@
 #include <vector>
 #include <chrono>
 #include <omp.h>
+#include <algorithm>
 
 unsigned long long site[100], size;
 std::vector<unsigned long long> bits;
@@ -271,7 +272,10 @@ int main(int argc, char *argv[]) {
   auto eval = hps::from_stream<std::vector<double>>(eigenvalues_file);
 
   double total_participation = 0.;
+  std::vector<int> skip_indices{0,1,2,3,4,5,6,7,8,9,11,12}; // indices of higher spin states to be skipped
   for (i = 0; i < num; i++) {
+    if (std::find(skip_indices.begin(), skip_indices.end(), i) != skip_indices.end()) continue;
+
     std::ifstream indices_file("indices" + std::to_string(i) + ".dat",
                                std::ofstream::binary);
     auto indices = hps::from_stream<std::vector<long int>>(indices_file);
