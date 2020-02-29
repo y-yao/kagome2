@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
     normalize(basis[i]);
   }
 
-/*
+  // This block is for calculating low-energy Hamiltonian
   for (i = 0; i < states; ++i) {
     h(basis[i], tmp);
 
@@ -256,10 +256,10 @@ int main(int argc, char *argv[]) {
   }
 
   printf("\n");
-*/
+
 
   auto end = std::chrono::high_resolution_clock::now();
-  std::cout << "\tCalculating low-energy Hamiltonian takes " << std::chrono::duration<double>(end-start).count() / 3600 << "hrs." << std::endl;
+  std::cout << "\tCalculating low-energy Hamiltonian for alpha = " << alpha << " takes " << std::chrono::duration<double>(end-start).count() / 3600 << "hrs." << std::endl;
 
 
   std::cout << "\nsize = " << size << "\n";
@@ -272,7 +272,10 @@ int main(int argc, char *argv[]) {
   auto eval = hps::from_stream<std::vector<double>>(eigenvalues_file);
 
   double total_participation = 0.;
-  std::vector<int> skip_indices{0,1,2,3,4,5,6,7,8,9,11,12}; // indices of higher spin states to be skipped
+  
+  std::vector<int> skip_indices;
+  //std::vector<int> skip_indices{0,1,2,3,4,5,6,7,8,9,11,12}; // indices of higher spin states to be skipped
+
   for (i = 0; i < num; i++) {
     if (std::find(skip_indices.begin(), skip_indices.end(), i) != skip_indices.end()) continue;
 
